@@ -9,7 +9,8 @@
     "react/jsx-filename-extension": [0, { "extensions": [".js", ".jsx"] }],
     "new-cap": [0],
     "react/require-extension": "off",
-    "max-len": [0]
+    "max-len": [0],
+    "no-mixed-operators": [0]
   },
   "globals": {
     "describe": true,
