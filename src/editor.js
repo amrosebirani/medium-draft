@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {
-  Editor,
   EditorState,
   RichUtils,
   SelectionState,
@@ -9,6 +8,11 @@ import {
   genKey,
   Modifier,
 } from 'draft-js';
+
+import Editor from 'draft-js-plugins-editor';
+
+import createImagePlugin from 'draft-js-image-plugin';
+
 import isSoftNewlineEvent from 'draft-js/lib/isSoftNewlineEvent';
 import { OrderedMap } from 'immutable';
 
