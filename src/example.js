@@ -12,6 +12,48 @@ import {
   AtomicBlockUtils,
 } from 'draft-js';
 
+import { composeDecorators } from 'draft-js-plugins-editor';
+
+import createAlignmentPlugin from 'draft-js-alignment-plugin';
+import createEmojiPlugin from 'draft-js-emoji-plugin';
+
+import createFocusPlugin from 'draft-js-focus-plugin';
+
+import createResizeablePlugin from 'draft-js-resizeable-plugin';
+import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin';
+import createImagePlugin from 'draft-js-image-plugin';
+
+import 'draft-js-image-plugin/lib/plugin.css';
+import './focus.css';
+import './emoji.css';
+import './alignment.css';
+import './image.css';
+
+const focusPlugin = createFocusPlugin();
+const resizeablePlugin = createResizeablePlugin();
+const blockDndPlugin = createBlockDndPlugin();
+const alignmentPlugin = createAlignmentPlugin();
+const { AlignmentTool } = alignmentPlugin;
+const emojiPlugin = createEmojiPlugin();
+const { EmojiSuggestions, EmojiSelect } = emojiPlugin;
+const decorator = composeDecorators(
+  resizeablePlugin.decorator,
+  alignmentPlugin.decorator,
+  focusPlugin.decorator,
+  blockDndPlugin.decorator
+);
+
+const imagePlugin = createImagePlugin({ decorator });
+
+const plugins = [
+  emojiPlugin,
+  blockDndPlugin,
+  focusPlugin,
+  alignmentPlugin,
+  resizeablePlugin,
+  imagePlugin,
+];
+
 import 'draft-js/dist/Draft.css';
 import 'hint.css/hint.min.css';
 
@@ -46,6 +88,8 @@ import {
   entityToHTML,
   styleToHTML,
 } from './exporter';
+
+import importer from './importer';
 
 
 const newTypeMap = StringToTypeMap;
@@ -305,9 +349,10 @@ class App extends React.Component {
     this.onChange = (editorState, callback = null) => {
       if (this.state.editorEnabled) {
         this.setState({ editorState }, () => {
-          if (callback) {
-            callback();
-          }
+          // if (callback) {
+          //   console.log(callback);
+          //   callback();
+          // }
         });
       }
     };
@@ -315,7 +360,12 @@ class App extends React.Component {
     this.sideButtons = [{
       title: 'Image',
       component: ImageSideButton,
-    }, {
+    },
+    {
+      title: 'Emoji',
+      component: EmojiSelect,
+    },
+     {
       title: 'Embed',
       component: EmbedSideButton,
     }, {
@@ -442,6 +492,8 @@ class App extends React.Component {
   renderHTML(e) {
     const currentContent = this.state.editorState.getCurrentContent();
     const eHTML = this.exporter(currentContent);
+    console.log(eHTML);
+    console.log(convertToRaw(importer(eHTML)));
     var newWin = window.open(
       `${window.location.pathname}rendered.html`,
       'windowName',`height=${window.screen.height},width=${window.screen.wdith}`);
@@ -516,6 +568,9 @@ class App extends React.Component {
           beforeInput={handleBeforeInput}
           handleReturn={this.handleReturn}
           sideButtons={this.sideButtons}
+          plugins={plugins}
+          emojiSuggestions={EmojiSuggestions}
+          alignmentTool={AlignmentTool}
           rendererFn={this.rendererFn}
         />
       </div>

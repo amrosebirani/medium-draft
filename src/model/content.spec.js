@@ -1,9 +1,9 @@
-import { convertToRaw, CompositeDecorator } from 'draft-js';
+import { convertToRaw } from 'draft-js';
+import MultiDecorator from 'draft-js-plugins-editor/lib/Editor/MultiDecorator';
 import createEditorState from './content';
 import { Block } from '../util/constants';
 
 import preData from '../../docs/data.json';
-import Link, { findLinkEntities } from '../components/entities/link';
 
 describe('createEditorState', () => {
   const es = createEditorState();
@@ -16,13 +16,9 @@ describe('createEditorState', () => {
     expect(raw.blocks[0]).to.include.keys('data', 'key');
   });
 
-  it('adds link decorator by default in CompositeDecorator', () => {
-    expect(es.getDecorator()).to.be.instanceof(CompositeDecorator);
-    expect(es.getDecorator()._decorators.length).to.equal(1);
-    expect(es.getDecorator()._decorators[0]).to.deep.equal({
-      strategy: findLinkEntities,
-      component: Link,
-    });
+  it('adds link decorator by default in MultiDecorator', () => {
+    expect(es.getDecorator()).to.be.instanceof(MultiDecorator);
+    expect(es.getDecorator().decorators.size).to.equal(1);
   });
 
   const esContent = createEditorState(preData);
@@ -31,11 +27,7 @@ describe('createEditorState', () => {
     const blocks = esContent.getCurrentContent().getBlockMap();
     expect(blocks.size).to.be.above(1);
 
-    expect(esContent.getDecorator()).to.be.instanceof(CompositeDecorator);
-    expect(esContent.getDecorator()._decorators.length).to.equal(1);
-    expect(esContent.getDecorator()._decorators[0]).to.deep.equal({
-      strategy: findLinkEntities,
-      component: Link,
-    });
+    expect(esContent.getDecorator()).to.be.instanceof(MultiDecorator);
+    expect(esContent.getDecorator().decorators.size).to.equal(1);
   });
 });

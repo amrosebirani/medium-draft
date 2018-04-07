@@ -122,6 +122,13 @@ function getLoaders(env) {
 
   loaders.push({ test: /\.json$/, loader: 'json-loader' });
 
+  // loaders.push({
+  //   test: /plugin\.css$/,
+  //   loaders: [
+  //     'style-loader', 'css-loader',
+  //   ],
+  // },);
+
   if (env === ENV_PROD ) {
     loaders.push({
       test: /(\.css|\.scss)$/,

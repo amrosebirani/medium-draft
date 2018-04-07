@@ -29,6 +29,26 @@ export const htmlToEntity = (nodeName, node, createEntity) => {
   if (nodeName === 'a') {
     return createEntity(EntityType.LINK, 'MUTABLE', { url: node.href });
   }
+  if (nodeName === 'img') {
+    let alignment = 'default';
+    let width = 40;
+    if (node.style) {
+      const style = node.style.cssText;
+      if (style.includes('float: left')) {
+        alignment = 'left';
+      }
+      if (style.includes('float: right')) {
+        alignment = 'right';
+      }
+      if (style.includes('display: block')) {
+        alignment = 'center';
+      }
+      if (style.includes('width')) {
+        width = parseInt(style.match(/width:(.*?)%/)[1], 10);
+      }
+    }
+    return createEntity(EntityType.IMAGE, 'IMMUTABLE', { src: node.src, width, alignment });
+  }
   return undefined;
 };
 

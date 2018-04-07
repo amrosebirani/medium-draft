@@ -5,15 +5,19 @@ import {
   ContentState,
 } from 'draft-js';
 
+import MultiDecorator from 'draft-js-plugins-editor/lib/Editor/MultiDecorator';
+
 import Link, { findLinkEntities } from '../components/entities/link';
 
 
-const defaultDecorators = new CompositeDecorator([
+const compositeDecorator = new CompositeDecorator([
   {
     strategy: findLinkEntities,
     component: Link,
   },
 ]);
+
+const defaultDecorators = new MultiDecorator([compositeDecorator]);
 
 
 const createEditorState = (content = null, decorators = defaultDecorators) => {

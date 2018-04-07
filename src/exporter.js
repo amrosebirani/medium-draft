@@ -1,6 +1,5 @@
 import React from 'react';
 import { convertToHTML } from 'draft-convert';
-
 import { Inline, Block, Entity } from './util/constants';
 
 export const styleToHTML = (style) => {
@@ -115,6 +114,40 @@ export const entityToHTML = (entity, originalText) => {
         {originalText}
       </a>
     );
+  }
+  if (entity.type === 'image') {
+    if (entity.data.width && entity.data.alignment) {
+      if (entity.data.alignment === 'default') {
+        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; "/>`;
+      }
+      if (entity.data.alignment === 'center') {
+        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%;  margin-left: auto; margin-right: auto; display: block;"/>`;
+      }
+      if (entity.data.alignment === 'left') {
+        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; float: left;"/>`;
+      }
+      if (entity.data.alignment === 'right') {
+        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; float: right;"/>`;
+      }
+    }
+    if (entity.data.alignment) {
+      if (entity.data.alignment === 'default') {
+        return `<img src="${entity.data.src}" style="position: relative;"/>`;
+      }
+      if (entity.data.alignment === 'center') {
+        return `<img src="${entity.data.src}" style="position: relative;margin-left: auto; margin-right: auto; display: block;"/>`;
+      }
+      if (entity.data.alignment === 'left') {
+        return `<img src="${entity.data.src}" style="position: relative;float: left;"/>`;
+      }
+      if (entity.data.alignment === 'right') {
+        return `<img src="${entity.data.src}" style="position: relative;float: right;"/>`;
+      }
+    }
+    if (entity.data.width) {
+      return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; "/>`;
+    }
+    return `<img src="${entity.data.src}" />`;
   }
   return originalText;
 };

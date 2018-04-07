@@ -11,8 +11,6 @@ import {
 
 import Editor from 'draft-js-plugins-editor';
 
-import createImagePlugin from 'draft-js-image-plugin';
-
 import isSoftNewlineEvent from 'draft-js/lib/isSoftNewlineEvent';
 import { OrderedMap } from 'immutable';
 
@@ -93,6 +91,9 @@ class MediumDraftEditor extends React.Component {
     showLinkEditToolbar: PropTypes.bool,
     toolbarConfig: PropTypes.object,
     processURL: PropTypes.func,
+    plugins: PropTypes.arrayOf(PropTypes.object),
+    emojiSuggestions: PropTypes.func,
+    alignmentTool: PropTypes.func,
   };
 
   static defaultProps = {
@@ -125,6 +126,7 @@ class MediumDraftEditor extends React.Component {
     disableToolbar: false,
     showLinkEditToolbar: true,
     toolbarConfig: {},
+    plugins: [],
   };
 
   constructor(props) {
@@ -530,6 +532,7 @@ class MediumDraftEditor extends React.Component {
     }
     const blockButtons = this.configureToolbarBlockOptions(toolbarConfig);
     const inlineButtons = this.configureToolbarInlineOptions(toolbarConfig);
+    const sbs = this.props.sideButtons;
     return (
       <div className="md-RichEditor-root">
         <div className={editorClass}>
@@ -552,14 +555,16 @@ class MediumDraftEditor extends React.Component {
             keyBindingFn={this.props.keyBindingFn}
             placeholder={this.props.placeholder}
             spellCheck={editorEnabled && this.props.spellCheck}
+            plugins={this.props.plugins}
           />
-          {this.props.sideButtons.length > 0 && showAddButton && (
+          <this.props.emojiSuggestions />
+          {sbs.length > 0 && showAddButton && (
             <AddButton
               editorState={editorState}
               getEditorState={this.getEditorState}
               setEditorState={this.onChange}
               focus={this.focus}
-              sideButtons={this.props.sideButtons}
+              sideButtons={sbs}
             />
           )}
           {!disableToolbar && (
@@ -583,6 +588,7 @@ class MediumDraftEditor extends React.Component {
               removeLink={this.removeLink}
               editLink={this.editLinkAfterSelection}
             />)}
+          <this.props.alignmentTool />
         </div>
       </div>
     );

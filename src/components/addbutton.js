@@ -169,6 +169,7 @@ export default class AddButton extends React.Component {
             transitionLeaveTimeout={100}
             transitionAppearTimeout={100}
             transitionAppear
+            style={{ display: 'flex' }}
           >
             {this.props.sideButtons.map((button) => {
               const Button = button.component;

@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import { addNewBlock } from '../../model';
-import { Block } from '../../util/constants';
+import {
+  EditorState,
+  AtomicBlockUtils,
+} from 'draft-js';
 
 export default class ImageButton extends React.Component {
 
@@ -39,11 +40,19 @@ export default class ImageButton extends React.Component {
       // console.log(this.props.getEditorState());
       // eslint-disable-next-line no-undef
       const src = URL.createObjectURL(file);
-      this.props.setEditorState(addNewBlock(
-        this.props.getEditorState(),
-        Block.IMAGE, {
-          src,
-        }
+      const urlType = 'image';
+      const editorState = this.props.getEditorState();
+      const contentState = editorState.getCurrentContent();
+      const contentStateWithEntity = contentState.createEntity(urlType, 'IMMUTABLE', { src });
+      const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+      const newEditorState = AtomicBlockUtils.insertAtomicBlock(
+        editorState,
+        entityKey,
+        ' '
+      );
+      this.props.setEditorState(EditorState.forceSelection(
+        newEditorState,
+        newEditorState.getCurrentContent().getSelectionAfter()
       ));
     }
     this.props.close();

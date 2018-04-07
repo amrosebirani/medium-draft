@@ -70,6 +70,14 @@
     }
 }
 
+.md-block-atomic {
+  margin: 0;
+  img {
+      width:40%;
+      box-sizing: border-box;
+  }
+}
+
 .md-block-atomic-embed {
   margin: 10px 0;
 }
