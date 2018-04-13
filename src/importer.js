@@ -29,7 +29,7 @@ export const htmlToEntity = (nodeName, node, createEntity) => {
   if (nodeName === 'a') {
     return createEntity(EntityType.LINK, 'MUTABLE', { url: node.href });
   }
-  if (nodeName === 'img') {
+  if (nodeName === 'img' || nodeName === 'video') {
     let alignment = 'default';
     let width = 40;
     if (node.style) {
@@ -47,12 +47,22 @@ export const htmlToEntity = (nodeName, node, createEntity) => {
         width = parseInt(style.match(/width:(.*?)%/)[1], 10);
       }
     }
-    return createEntity(EntityType.IMAGE, 'IMMUTABLE', { src: node.src, width, alignment });
+    if (nodeName === 'img') {
+      return createEntity(EntityType.IMAGE, 'IMMUTABLE', { src: node.src, width, alignment });
+    }
+    return createEntity(EntityType.VIDEO, 'IMMUTABLE', { src: node.src, width, alignment });
   }
   return undefined;
 };
 
 export const htmlToBlock = (nodeName, node) => {
+  let textAlignment = 'left';
+  if (node.className.match(/textcenter/)) {
+    textAlignment = 'center';
+  }
+  if (node.className.match(/textright/)) {
+    textAlignment = 'right';
+  }
   if (nodeName === 'h1') {
     return {
       type: Block.H1,
@@ -66,7 +76,7 @@ export const htmlToBlock = (nodeName, node) => {
   } else if (nodeName === 'h3') {
     return {
       type: Block.H3,
-      data: {},
+      data: { textAlignment },
     };
   } else if (nodeName === 'h4') {
     return {
@@ -88,7 +98,7 @@ export const htmlToBlock = (nodeName, node) => {
              node.className === `md-block-${Block.BLOCKQUOTE_CAPTION.toLowerCase()}`)) {
     return {
       type: Block.BLOCKQUOTE_CAPTION,
-      data: {},
+      data: { textAlignment },
     };
   } else if (nodeName === 'figure') {
     if (node.className.match(/^md-block-image/)) {
@@ -122,12 +132,17 @@ export const htmlToBlock = (nodeName, node) => {
   } else if (nodeName === 'blockquote') {
     return {
       type: Block.BLOCKQUOTE,
-      data: {},
+      data: { textAlignment },
     };
   } else if (nodeName === 'p') {
     return {
       type: Block.UNSTYLED,
-      data: {},
+      data: { textAlignment },
+    };
+  } else if (nodeName === 'pre') {
+    return {
+      type: Block.CODE,
+      data: { language: 'javascript' },
     };
   }
 

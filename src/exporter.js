@@ -23,16 +23,35 @@ export const styleToHTML = (style) => {
 
 export const blockToHTML = (block) => {
   const blockType = block.type;
+  const data = block.data;
+  let textAlignment = 'left';
+  if (data.textAlignment) {
+    textAlignment = data.textAlignment;
+  }
+  let alignmentClass = 'textleft';
+  switch (textAlignment) {
+    case 'left':
+      alignmentClass = 'textleft';
+      break;
+    case 'right':
+      alignmentClass = 'textright';
+      break;
+    case 'center':
+      alignmentClass = 'textcenter';
+      break;
+    default:
+      break;
+  }
   switch (blockType) {
     case Block.H1:
       // eslint-disable-next-line jsx-a11y/heading-has-content
-      return <h1 className={`md-block-${blockType.toLowerCase()}`} />;
+      return <h1 className={`md-block-${blockType.toLowerCase()} `} />;
     case Block.H2:
       // eslint-disable-next-line jsx-a11y/heading-has-content
       return <h2 className={`md-block-${blockType.toLowerCase()}`} />;
     case Block.H3:
       // eslint-disable-next-line jsx-a11y/heading-has-content
-      return <h3 className={`md-block-${blockType.toLowerCase()}`} />;
+      return <h3 className={`md-block-${blockType.toLowerCase()} ${alignmentClass}`} />;
     case Block.H4:
       // eslint-disable-next-line jsx-a11y/heading-has-content
       return <h4 className={`md-block-${blockType.toLowerCase()}`} />;
@@ -45,7 +64,7 @@ export const blockToHTML = (block) => {
     case Block.BLOCKQUOTE_CAPTION:
     case Block.CAPTION:
       return {
-        start: `<p class="md-block-${blockType.toLowerCase()}"><caption>`,
+        start: `<p class="md-block-${blockType.toLowerCase()} ${alignmentClass}"><caption>`,
         end: '</caption></p>',
       };
     case Block.IMAGE: {
@@ -61,6 +80,11 @@ export const blockToHTML = (block) => {
       return {
         start: `<figure class="md-block-${blockType.toLowerCase()}">`,
         end: '</figure>',
+      };
+    case Block.CODE:
+      return {
+        start: '<pre>',
+        end: '</pre>',
       };
     case Block.TODO: {
       const checked = block.data.checked || false;
@@ -81,7 +105,7 @@ export const blockToHTML = (block) => {
     case Block.BREAK:
       return <hr className={`md-block-${blockType.toLowerCase()}`} />;
     case Block.BLOCKQUOTE:
-      return <blockquote className={`md-block-${blockType.toLowerCase()}`} />;
+      return <blockquote className={`md-block-${blockType.toLowerCase()} ${alignmentClass}`} />;
     case Block.OL:
       return {
         element: <li />,
@@ -94,9 +118,9 @@ export const blockToHTML = (block) => {
       };
     case Block.UNSTYLED:
       if (block.text.length < 1) {
-        return <p className={`md-block-${blockType.toLowerCase()}`}><br /></p>;
+        return <p className={`md-block-${blockType.toLowerCase()} ${alignmentClass}`}><br /></p>;
       }
-      return <p className={`md-block-${blockType.toLowerCase()}`} />;
+      return <p className={`md-block-${blockType.toLowerCase()} ${alignmentClass}`} />;
     default: return null;
   }
 };
@@ -115,39 +139,39 @@ export const entityToHTML = (entity, originalText) => {
       </a>
     );
   }
-  if (entity.type === 'image') {
+  if (entity.type === 'image' || entity.type === 'draft-js-video-plugin-video') {
     if (entity.data.width && entity.data.alignment) {
       if (entity.data.alignment === 'default') {
-        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; "/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; " ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
       if (entity.data.alignment === 'center') {
-        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%;  margin-left: auto; margin-right: auto; display: block;"/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative; width:${entity.data.width}%;  margin-left: auto; margin-right: auto; display: block;" ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
       if (entity.data.alignment === 'left') {
-        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; float: left;"/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; float: left;" ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
       if (entity.data.alignment === 'right') {
-        return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; float: right;"/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; float: right;" ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
     }
     if (entity.data.alignment) {
       if (entity.data.alignment === 'default') {
-        return `<img src="${entity.data.src}" style="position: relative;"/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative;" ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
       if (entity.data.alignment === 'center') {
-        return `<img src="${entity.data.src}" style="position: relative;margin-left: auto; margin-right: auto; display: block;"/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative;margin-left: auto; margin-right: auto; display: block;" ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
       if (entity.data.alignment === 'left') {
-        return `<img src="${entity.data.src}" style="position: relative;float: left;"/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative;float: left;" ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
       if (entity.data.alignment === 'right') {
-        return `<img src="${entity.data.src}" style="position: relative;float: right;"/>`;
+        return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative;float: right;" ${entity.type === 'image' ? '' : 'controls'}/>`;
       }
     }
     if (entity.data.width) {
-      return `<img src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; "/>`;
+      return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" style="position: relative; width:${entity.data.width}%; " ${entity.type === 'image' ? '' : 'controls'}/>`;
     }
-    return `<img src="${entity.data.src}" />`;
+    return `<${entity.type === 'image' ? 'img' : 'video'} src="${entity.data.src}" ${entity.type === 'image' ? '' : 'controls'} />`;
   }
   return originalText;
 };

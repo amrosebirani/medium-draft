@@ -16,6 +16,8 @@ import ImageBlock from './components/blocks/image';
 import BreakBlock from './components/blocks/break';
 
 import ImageSideButton from './components/sides/image';
+import VideoSideButton from './components/sides/video';
+import CodeSideButton from './components/sides/codeblock';
 import BreakSideButton from './components/sides/break';
 
 export { Block, Inline, Entity, HANDLED, NOT_HANDLED } from './util/constants';
@@ -28,6 +30,7 @@ export {
   resetBlockWithType,
   updateDataOfBlock,
   addNewBlockAt,
+  addNewCodeBlock,
 } from './model';
 
 // eslint-disable-next-line no-undef
@@ -51,6 +54,8 @@ export {
   ImageBlock,
   BreakBlock,
   ImageSideButton,
+  VideoSideButton,
+  CodeSideButton,
   BreakSideButton,
 };
 

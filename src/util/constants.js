@@ -37,6 +37,7 @@ export const Inline = {
 export const Entity = {
   LINK: 'LINK',
   IMAGE: 'image',
+  VIDEO: 'draft-js-video-plugin-video',
 };
 
 export const HYPERLINK = 'hyperlink';

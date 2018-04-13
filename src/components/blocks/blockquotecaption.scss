@@ -12,4 +12,27 @@
             margin-right: 10px;
         }
     }
+
+    .public-DraftStyleDefault-ltr {}
+
+    .textcenter {
+      .public-DraftStyleDefault-ltr {
+        direction: ltr;
+        text-align: center;
+      }
+    } 
+
+    .textleft {
+      .public-DraftStyleDefault-ltr {
+        direction: ltr;
+        text-align: left;
+      }
+    } 
+
+    .textright {
+      .public-DraftStyleDefault-ltr {
+        direction: ltr;
+        text-align: right;
+      }
+    } 
 }

@@ -17,14 +17,14 @@ describe('blockStyleFn()', () => {
     const normalBlock = new ContentBlock({
       type: Block.UNSTYLED,
     });
-    expect(blockStyleFn(normalBlock)).to.equal(`${BASE_BLOCK_CLASS} ${BASE_BLOCK_CLASS}-paragraph`);
+    expect(blockStyleFn(normalBlock)).to.equal(`${BASE_BLOCK_CLASS} ${BASE_BLOCK_CLASS}-paragraph textleft`);
   });
 
   it('should return block class for CAPTION', () => {
     const normalBlock = new ContentBlock({
       type: Block.CAPTION,
     });
-    expect(blockStyleFn(normalBlock)).to.equal(`${BASE_BLOCK_CLASS} ${BASE_BLOCK_CLASS}-caption`);
+    expect(blockStyleFn(normalBlock)).to.equal(`${BASE_BLOCK_CLASS} ${BASE_BLOCK_CLASS}-caption textleft`);
   });
 
   it('should return block class for BLOCKQUOTE_CAPTION', () => {
@@ -33,7 +33,7 @@ describe('blockStyleFn()', () => {
     });
     const cls = `${BASE_BLOCK_CLASS} ${BASE_BLOCK_CLASS}-quote`;
     expect(blockStyleFn(normalBlock)).to.equal(
-      `${cls} md-RichEditor-blockquote ${BASE_BLOCK_CLASS}-quote-caption`);
+      `${cls} md-RichEditor-blockquote ${BASE_BLOCK_CLASS}-quote-caption textleft`);
   });
 
   it('should return block class for BLOCKQUOTE', () => {
@@ -41,7 +41,7 @@ describe('blockStyleFn()', () => {
       type: Block.BLOCKQUOTE,
     });
     expect(blockStyleFn(normalBlock)).to.equal(
-      `${BASE_BLOCK_CLASS} ${BASE_BLOCK_CLASS}-quote md-RichEditor-blockquote`);
+      `${BASE_BLOCK_CLASS} ${BASE_BLOCK_CLASS}-quote md-RichEditor-blockquote textleft`);
   });
 
   it('should return block class for ATOMIC', () => {

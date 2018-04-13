@@ -15,7 +15,7 @@ import isSoftNewlineEvent from 'draft-js/lib/isSoftNewlineEvent';
 import { OrderedMap } from 'immutable';
 
 import AddButton from './components/addbutton';
-import Toolbar, { BLOCK_BUTTONS, INLINE_BUTTONS } from './components/toolbar';
+import Toolbar, { BLOCK_BUTTONS, INLINE_BUTTONS, ALIGNMENT_BUTTONS } from './components/toolbar';
 import LinkEditComponent from './components/LinkEditComponent';
 
 import rendererFn from './components/customrenderer';
@@ -76,6 +76,16 @@ class MediumDraftEditor extends React.Component {
       icon: PropTypes.string,
       description: PropTypes.string,
     })),
+    alignButtons: PropTypes.arrayOf(PropTypes.shape({
+      label: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.element,
+        PropTypes.object,
+      ]),
+      style: PropTypes.string.isRequired,
+      icon: PropTypes.string,
+      description: PropTypes.string,
+    })),
     placeholder: PropTypes.string,
     continuousBlocks: PropTypes.arrayOf(PropTypes.string),
     sideButtons: PropTypes.arrayOf(PropTypes.shape({
@@ -108,6 +118,7 @@ class MediumDraftEditor extends React.Component {
     blockRenderMap: RenderMap,
     blockButtons: BLOCK_BUTTONS,
     inlineButtons: INLINE_BUTTONS,
+    alignButtons: ALIGNMENT_BUTTONS,
     placeholder: 'Write your story...',
     continuousBlocks: [
       Block.UNSTYLED,
@@ -145,6 +156,7 @@ class MediumDraftEditor extends React.Component {
     this.handleReturn = this.handleReturn.bind(this);
     this.toggleBlockType = this._toggleBlockType.bind(this);
     this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
+    this.toggleAlignmentData = this._toggleAlignmentData.bind(this);
     this.setLink = this.setLink.bind(this);
     this.blockRendererFn = this.props.rendererFn(this.onChange, this.getEditorState);
   }
@@ -261,6 +273,13 @@ class MediumDraftEditor extends React.Component {
       ? toolbarConfig.inline.map(type => INLINE_BUTTONS.find(button => button.style === type))
         .filter(button => button !== undefined)
       : this.props.inlineButtons;
+  }
+
+  configureToolbarAlignOptions(toolbarConfig) {
+    return toolbarConfig && toolbarConfig.align
+      ? toolbarConfig.inline.map(type => ALIGNMENT_BUTTONS.find(button => button.style === type))
+        .filter(button => button !== undefined)
+      : this.props.alignButtons;
   }
 
   /*
@@ -382,6 +401,15 @@ class MediumDraftEditor extends React.Component {
         return HANDLED;
       }
 
+      if (blockType.indexOf(Block.CODE) === 0) {
+        if (currentBlock.getLength() !== 0) {
+          this.onChange(addNewBlockAt(editorState, currentBlock.getKey(), Block.CODE, { language: 'javascript' }));
+        } else {
+          this.onChange(resetBlockWithType(editorState, Block.UNSTYLED));
+        }
+        return HANDLED;
+      }
+
       if (currentBlock.getLength() === 0) {
         switch (blockType) {
           case Block.UL:
@@ -443,6 +471,13 @@ class MediumDraftEditor extends React.Component {
         inlineStyle
       )
     );
+  }
+
+  _toggleAlignmentData(alignment) {
+    const selectionState = this.props.editorState.getSelection();
+    const contentState = this.props.editorState.getCurrentContent();
+    const newContentState = Modifier.setBlockData(contentState, selectionState, { textAlignment: alignment });
+    this.onChange(EditorState.push(this.props.editorState, newContentState, 'change-block-type'));
   }
 
   removeLink = (blockKey, entityKey) => {
@@ -532,6 +567,7 @@ class MediumDraftEditor extends React.Component {
     }
     const blockButtons = this.configureToolbarBlockOptions(toolbarConfig);
     const inlineButtons = this.configureToolbarInlineOptions(toolbarConfig);
+    const alignButtons = this.configureToolbarAlignOptions(toolbarConfig);
     const sbs = this.props.sideButtons;
     return (
       <div className="md-RichEditor-root">
@@ -574,11 +610,13 @@ class MediumDraftEditor extends React.Component {
               editorState={editorState}
               toggleBlockType={this.toggleBlockType}
               toggleInlineStyle={this.toggleInlineStyle}
+              toggleAlignmentData={this.toggleAlignmentData}
               editorEnabled={editorEnabled}
               setLink={this.setLink}
               focus={this.focus}
               blockButtons={blockButtons}
               inlineButtons={inlineButtons}
+              alignButtons={alignButtons}
             />
           )}
           {isCursorLink && (

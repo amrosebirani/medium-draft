@@ -16,20 +16,28 @@ import { composeDecorators } from 'draft-js-plugins-editor';
 
 import createAlignmentPlugin from 'draft-js-alignment-plugin';
 import createEmojiPlugin from 'draft-js-emoji-plugin';
+import createVideoPlugin from 'worknet-draft-js-video-plugin';
 
 import createFocusPlugin from 'draft-js-focus-plugin';
 
 import createResizeablePlugin from 'draft-js-resizeable-plugin';
 import createBlockDndPlugin from 'draft-js-drag-n-drop-plugin';
 import createImagePlugin from 'draft-js-image-plugin';
+import Prism from 'prismjs';
+import createPrismPlugin from 'draft-js-prism-plugin';
+import createHashtagPlugin from 'draft-js-hashtag-plugin';
 
-import 'draft-js-image-plugin/lib/plugin.css';
+// import 'draft-js-image-plugin/lib/plugin.css';
+import './hashtag.css';
 import './focus.css';
 import './emoji.css';
 import './alignment.css';
 import './image.css';
+import './video.css';
+import './prism.css';
 
 const focusPlugin = createFocusPlugin();
+const hashtagPlugin = createHashtagPlugin();
 const resizeablePlugin = createResizeablePlugin();
 const blockDndPlugin = createBlockDndPlugin();
 const alignmentPlugin = createAlignmentPlugin();
@@ -44,14 +52,22 @@ const decorator = composeDecorators(
 );
 
 const imagePlugin = createImagePlugin({ decorator });
+const videoPlugin = createVideoPlugin({ decorator });
+const prismPlugin = createPrismPlugin({
+  // It's required to provide your own instance of Prism
+  prism: Prism
+});
 
 const plugins = [
+  // prismPlugin, 
+  hashtagPlugin,
   emojiPlugin,
   blockDndPlugin,
   focusPlugin,
   alignmentPlugin,
   resizeablePlugin,
   imagePlugin,
+  videoPlugin,
 ];
 
 import 'draft-js/dist/Draft.css';
@@ -77,6 +93,8 @@ import {
   beforeInput,
   getCurrentBlock,
   ImageSideButton,
+  VideoSideButton,
+  CodeSideButton,
   rendererFn,
   HANDLED,
   NOT_HANDLED
@@ -362,12 +380,16 @@ class App extends React.Component {
       component: ImageSideButton,
     },
     {
+      title: 'Video',
+      component: VideoSideButton,
+    },
+    {
+      title: 'Code',
+      component: CodeSideButton,
+    },
+    {
       title: 'Emoji',
       component: EmojiSelect,
-    },
-     {
-      title: 'Embed',
-      component: EmbedSideButton,
     }, {
       title: 'Separator',
       component: SeparatorSideButton,
@@ -393,7 +415,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(this.fetchData, 1000);
+    // setTimeout(this.fetchData, 1000);
   }
 
   rendererFn(setEditorState, getEditorState) {
